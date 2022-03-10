@@ -1,11 +1,15 @@
 package inhatc.ac.kr.springstudy.configuration;
 
+import java.io.IOException;
+import java.net.URL;
+
 import javax.sql.DataSource;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -19,8 +23,12 @@ import com.zaxxer.hikari.HikariDataSource;
 @PropertySource("classpath:/application.properties")
 public class DataBaseConriguration {
 	
+	
 //	마이바티스 설정에 필요한 변수
+	@Autowired
 	private ApplicationContext applicationContext;
+
+
 	
 //	hikariconfig를 메모리에서 갖다 쓸 거니까 
 	@Bean
@@ -31,7 +39,6 @@ public class DataBaseConriguration {
 		
 	}
 	
-
 	
 //	마이바티스는 xml로 구성하는데 xml 파일을 추가해서 여기에 연동시켜 줄 겁니다.
 	
@@ -45,14 +52,20 @@ public class DataBaseConriguration {
 		return dataSource;
 	}
 	
+	
+	
 	@Bean
-	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) {
+	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(dataSource);
 //		아마 읽어올 수 있는 경로 설정하는 것 같아요 
 //		위에 만들어놓은 applicationContext에서 가지고 올 거예요
 //		근데 여러 종류의 폴더가 존재할 수 있기 때문에 **로 설정
-		sqlSessionFactoryBean.setMapperLocations(applicationContext.getResource("classpath:/mapper/**/sql-*.xml"));
+		sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources("classpath:/mapper/**/sql-*.xml"));
+//		bean 중에서도 걔 담겨있는 object를 가져와야 한다.
+//		근데 이것도 얘외처리를 해야합니다.
+		return sqlSessionFactoryBean.getObject();
+		
 	}
 	
 
