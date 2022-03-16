@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -53,7 +54,7 @@ public class DataBaseConriguration {
 	}
 	
 	
-	
+//	마이바티스를 쓰기 위해선 아래 두 가지 동작을 이렇게 미리 해놔야 한다.
 	@Bean
 	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
@@ -66,6 +67,11 @@ public class DataBaseConriguration {
 //		근데 이것도 얘외처리를 해야합니다.
 		return sqlSessionFactoryBean.getObject();
 		
+	}
+	
+	@Bean
+	public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
+		return new SqlSessionTemplate(sqlSessionFactory);
 	}
 	
 
